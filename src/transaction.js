@@ -114,3 +114,20 @@ export function submitMetadata(
     return Blockfrost.submitTransaction(tx)
   })
 }
+
+
+export function extractMetadata(metadata, password = null, label = 247424) {
+  if ("label" in metadata && metadata.label == String(label)) {
+    let json = metadata.json_metadata 
+    if (Array.isArray(json)) {
+      try {
+        const ciphertext = json.map(x => x.slice(2)).join("")
+        json = JSON.parse(Encryption.decryptString(password, ciphertext))
+      } catch (e) {
+      }
+    }
+    if ("amount" in json && "purpose" in json && parseFloat(json.amount) > 0)
+      return json
+  }
+  return null
+}

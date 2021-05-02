@@ -1,0 +1,33 @@
+td {
+  padding: 0.5em
+}
+
+a {
+  font-family    : monospace
+; text-decoration: none
+}
+
+input[type=number] {
+  text-align: right
+}
+
+td.number {
+  text-align: right
+}
+
+input[type=number], input[type=text] {
+  border-style: solid
+}
+
+input:invalid {
+  border-color: pink
+; border-width: thick
+}
+
+#refresh {
+  margin-top: 1em
+}
+
+body {
+  font-family: sans-serif
+}

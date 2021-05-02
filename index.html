@@ -5,38 +5,54 @@
     <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico"/>
     <link href="view.css" type="text/css" rel="stylesheet"/>
     <script src="controller.js" type="application/javascript"> </script>
-    <title>Minimum ADA for Token Bundles</title>
+    <title>Request Reimbursement</title>
   </head>
-  <body onload="Controller.setup()">
-    <h1>Test</h1>
+  <body id="theBody" onload="Controller.setup()">
+    <h1>Request Reimbursement</h1>
+    <hr/>
+    <h2>New Request</h2>
     <form>
       <table>
         <tbody>
           <tr>
-            <td>My address:</td>
+            <td colspan="2">My address:</td>
             <td id="thisAddress"></td>
           </tr>
           <tr>
-            <td>Output address:</td>
+            <td colspan="2">Output address:</td>
             <td id="thatAddress"></td>
           </tr>
           <tr>
-            <td><label for="theAmount">Amount:</label</td>
-            <td>$<input id="theAmount" type="number" step="0.01" min=0" value="0.00"/>
+            <td colspan="2"><label for="theAmount">Amount:</label</td>
+            <td>$ <input id="theAmount" type="number" step="0.01" min="0.01" required="true" value="0.00" oninput="Controller.checkInput()"/>
           </tr>
           <tr>
-            <td><label for="thePurpose">Purpose:</label></td>
-            <td><input id="thePurpose" type="text" size="50"/></td>
+            <td colspan="2"><label for="thePurpose">Purpose:</label></td>
+            <td><input id="thePurpose" type="text" minlength="1" maxlength="50" required="true" size="50" oninput="Controller.checkInput()"/></td>
           </tr>
           <tr>
-            <td colspan="2"><input id="submit" type="button" value="Submit" onclick="Controller.submit()"/></td>
-          </tr>
-          <tr>
-            <td>Result:</td>
+            <td>Encrypt?<input id="encrypt" type="checkbox"/></td>
+            <td><input id="submit" type="button" value="Submit" disabled="true" onclick="Controller.submit()"/></td>
             <td id="theResult"/>
           </tr>
         </tbody>
       </table>
     </form>
+    <hr/>
+    <h2>Outstanding Requests</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Transaction</th>
+          <th>Amount</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody id="theOutstanding"/>
+    </table>
+    <div>
+      <input id="refresh" type="button" value="Refresh" onclick="Controller.refresh()"/>
+    </div>
+    <hr/>
   </body>
 </html>

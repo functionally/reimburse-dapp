@@ -45,3 +45,8 @@ export function queryUtxo(address) {
 export function submitTransaction(tx) {
   return callApi("tx/submit", tx.to_bytes())
 }
+
+
+export function fetchMetadata(txid) {
+  return callApi("txs/" + txid + "/metadata")
+}
