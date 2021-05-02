@@ -1,12 +1,42 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <head profile="http://www.w3.org/2005/10/profile">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico"/>
     <link href="view.css" type="text/css" rel="stylesheet"/>
-    <script src="controller.js"         type="application/javascript"> </script>
-    <title>Test</title>
+    <script src="controller.js" type="application/javascript"> </script>
+    <title>Minimum ADA for Token Bundles</title>
   </head>
-  <body>
+  <body onload="Controller.setup()">
     <h1>Test</h1>
+    <form>
+      <table>
+        <tbody>
+          <tr>
+            <td>My address:</td>
+            <td id="thisAddress"></td>
+          </tr>
+          <tr>
+            <td>Output address:</td>
+            <td id="thatAddress"></td>
+          </tr>
+          <tr>
+            <td><label for="theAmount">Amount:</label</td>
+            <td>$<input id="theAmount" type="number" step="0.01" min=0" value="0.00"/>
+          </tr>
+          <tr>
+            <td><label for="thePurpose">Purpose:</label></td>
+            <td><input id="thePurpose" type="text" size="50"/></td>
+          </tr>
+          <tr>
+            <td colspan="2"><input id="submit" type="button" value="Submit" onclick="Controller.submit()"/></td>
+          </tr>
+          <tr>
+            <td>Result:</td>
+            <td id="theResult"/>
+          </tr>
+        </tbody>
+      </table>
+    </form>
   </body>
 </html>

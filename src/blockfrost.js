@@ -9,7 +9,7 @@ export function setKey(key) {
 }
 
 
-function callApi(path, payload = null) {
+export function callApi(path, payload = null) {
   return new Promise(function (resolve, reject) {
     const xhr = new XMLHttpRequest()
     xhr.open(payload == null ? "GET" : "POST", blockfrostUrl + path)
