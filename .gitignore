@@ -1,0 +1,7 @@
+tmp/
+*.tmp
+*.log
+*.sw?
+node_modules/
+package-lock.json
+localhost.*
