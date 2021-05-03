@@ -8,6 +8,8 @@
   "main": "src/controller.js",
   "dependencies": {
     "@emurgo/cardano-serialization-lib-asmjs": "^7.0.0",
+    "@emurgo/cardano-serialization-lib-browser": "^7.0.0",
+    "buffer-es6": "^4.9.3",
     "nodejs": "*"
   },
   "devDependencies": {

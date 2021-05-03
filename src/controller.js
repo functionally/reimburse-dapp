@@ -1,11 +1,9 @@
 
-const Address     = require("./address.js"    )
-const Blockfrost  = require("./blockfrost.js" )
-const Encryption  = require("./encryption.js" )
-const Secrets     = require("./secrets.js"    )
-const Transaction = require("./transaction.js")
-
-require("buffer")
+import * as Address     from "./address.js"
+import * as Blockfrost  from "./blockfrost.js"
+import * as Encryption  from "./encryption.js"
+import * as Secrets     from "./secrets.js"
+import * as Transaction from "./transaction.js"
 
 
 const autoRefresh = false
@@ -14,9 +12,9 @@ const autoRefresh = false
 Blockfrost.setKey(Secrets.blockfrostKey)
 
 
-const theVerificationKey = Address.makeVerificationKey(Secrets.theSigningKey)
+export const theVerificationKey = Address.makeVerificationKey(Secrets.theSigningKey)
 
-const theAddress = Address.makeAddress(theVerificationKey)
+export const theAddress = Address.makeAddress(theVerificationKey)
 
 
 function doWaiting(waiting) {
@@ -44,7 +42,7 @@ function linkTxId(src, txid) {
 }
 
 
-function setup() {
+export function setup() {
 
   linkAddress(thisAddress, theAddress.to_bech32())
   linkAddress(thatAddress, Secrets.outputAddress.to_bech32())
@@ -55,19 +53,19 @@ function setup() {
 }
 
 
-function checkInput() {
-  document.getElementById("submit").disabled = parseFloat(theAmount.value) <= 0 || thePurpose.value == ""
+export function checkInput() {
+  document.getElementById("submitButton").disabled = parseFloat(theAmount.value) <= 0 || thePurpose.value == ""
   theResult.innerText = ""
 }
 
 
-function submit() {
+export function submit() {
 
   doWaiting(true)
 
   theResult.innerText = "Submitting . . ."
 
-  const password = encrypt.checked ? Secrets.thePassword : null
+  const password = encryptButton.checked ? Secrets.thePassword : null
 
   const metadataJson = {
     amount  : theAmount.value
@@ -93,7 +91,7 @@ function submit() {
 }
 
 
-function refresh() {
+export function refresh() {
   theOutstanding.innerHTML = ""
   Blockfrost.queryUtxo(Secrets.outputAddress).then(utxos => {
     utxos.forEach(utxo => {
@@ -109,7 +107,7 @@ function refresh() {
       tr.appendChild(tdPurpose)
       Blockfrost.fetchMetadata(txid).then(metadatas => {
         metadatas.forEach(metadata => {
-          json = Transaction.extractMetadata(metadata, Secrets.thePassword)
+          const json = Transaction.extractMetadata(metadata, Secrets.thePassword)
           if (json) {
             tdAmount.innerText = parseFloat(json.amount).toFixed(2)
             tdPurpose.innerText = json.purpose
@@ -124,25 +122,7 @@ function refresh() {
 }
 
 
-module.exports = {
-
-  Address     : require("./address.js"    )
-, Blockfrost  : require("./blockfrost.js" )
-, Encryption  : require("./encryption.js" )
-, Transaction : require("./transaction.js")
-
-, Buffer  : Buffer
-, Cardano : require("@emurgo/cardano-serialization-lib-asmjs/cardano_serialization_lib.js")
-
-, thePassword        : Secrets.thePassword
-, outputAddress      : Secrets.outputAddress
-, theSigningKey      : Secrets.theSigningKey
-, theVerificationKey : theVerificationKey
-, theAddress         : theAddress
-
-, setup      : setup
-, submit     : submit
-, checkInput : checkInput
-, refresh    : refresh
-
-}
+window.checkInput        = checkInput
+window.refresh           = refresh
+window.setup             = setup
+window.submitTransaction = submit
