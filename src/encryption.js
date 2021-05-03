@@ -1,7 +1,7 @@
 
-import {Buffer} from '../node_modules/buffer-es6/index.js'
+import {Buffer} from '../lib/buffer-es6/index.js'
 
-import * as Cardano from "../node_modules/@emurgo/cardano-serialization-lib-asmjs/cardano_serialization_lib.js"
+import * as Cardano from "../lib/cardano-serialization-lib-asmjs/cardano_serialization_lib.js"
 
 
 const SALT_SIZE = 32

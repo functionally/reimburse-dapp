@@ -26,7 +26,7 @@ function linkAddress(src, address) {
   const a = document.createElement("A")
   a.target = "_reimburse"
   a.href = "https://explorer.cardano-testnet.iohkdev.io/en/address?address=" + address
-  a.innerText = address.slice(0, 20) + "..." + address.slice(-20)
+  a.innerText = address.slice(0, 20) + "…" + address.slice(-20)
   src.innerHTML = ""
   src.appendChild(a)
 }
@@ -36,7 +36,7 @@ function linkTxId(src, txid) {
   const a = document.createElement("A")
   a.target = "_reimburse"
   a.href = "https://explorer.cardano-testnet.iohkdev.io/en/transaction?id=" + txid
-  a.innerText = txid.slice(0, 20) + "..." + txid.slice(-20)
+  a.innerText = txid.slice(0, 20) + "…" + txid.slice(-20)
   src.innerHTML = ""
   src.appendChild(a)
 }
