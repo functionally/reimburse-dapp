@@ -126,7 +126,7 @@ export function extractMetadata(metadata, password = null, label = 247424) {
       } catch (e) {
       }
     }
-    if ("amount" in json && "purpose" in json && parseFloat(json.amount) > 0)
+    if ("date" in json && "amount" in json && "purpose" in json && parseFloat(json.amount) > 0)
       return json
   }
   return null

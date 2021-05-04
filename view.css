@@ -15,7 +15,7 @@ td.number {
   text-align: right
 }
 
-input[type=number], input[type=text] {
+input[type=date], input[type=number], input[type=text] {
   border-style: solid
 }
 

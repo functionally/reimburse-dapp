@@ -41,7 +41,7 @@ export function setup() {
 
 
 export function checkInput() {
-  submitButton.disabled = parseFloat(theAmount.value) <= 0 || thePurpose.value == ""
+  submitButton.disabled = theDate == "" || parseFloat(theAmount.value) <= 0 || thePurpose.value == ""
   theResult.innerText = ""
 }
 
@@ -55,7 +55,8 @@ export function submit() {
   const password = encryptButton.checked ? Secrets.thePassword : null
 
   const metadataJson = {
-    amount  : theAmount.value
+    date    : theDate.value
+  , amount  : theAmount.value
   , purpose : thePurpose.value
   }
 
@@ -66,6 +67,7 @@ export function submit() {
   , password
   ).then(txid => {
     linkTxId(theResult, txid)
+    theDate.value = ""
     theAmount.value = ""
     thePurpose.value = ""
     modal.style.display = "none"
@@ -91,6 +93,8 @@ export function refresh(address, element) {
           const tdTxid = document.createElement("TD")
           linkTxId(tdTxid, txid)
           tr.appendChild(tdTxid)
+          const tdDate = document.createElement("TD")
+          tr.appendChild(tdDate)
           const tdAmount = document.createElement("TD")
           tdAmount.className = "number"
           tr.appendChild(tdAmount)
@@ -99,6 +103,7 @@ export function refresh(address, element) {
           if (txid in seen) {
             const json = seen[txid]
             if (json) {
+              tdDate.innerText = json.date
               tdAmount.innerText = parseFloat(json.amount).toFixed(2)
               tdPurpose.innerText = json.purpose
               element.appendChild(tr)
@@ -109,6 +114,7 @@ export function refresh(address, element) {
               metadatas.forEach(metadata => {
                 const json = Transaction.extractMetadata(metadata, Secrets.thePassword)
                 if (json) {
+                  tdDate.innerText = json.date
                   tdAmount.innerText = parseFloat(json.amount).toFixed(2)
                   tdPurpose.innerText = json.purpose
                   element.appendChild(tr)
