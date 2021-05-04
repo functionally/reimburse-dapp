@@ -76,6 +76,8 @@ export function submit() {
 }
 
 
+let seen = {}
+
 export function refresh(address, element) {
   element.innerHTML = ""
   refreshRequestsButton.disabled = true
@@ -94,16 +96,26 @@ export function refresh(address, element) {
           tr.appendChild(tdAmount)
           const tdPurpose = document.createElement("TD")
           tr.appendChild(tdPurpose)
-          return Blockfrost.fetchMetadata(txid).then(metadatas => {
-            metadatas.forEach(metadata => {
-              const json = Transaction.extractMetadata(metadata, Secrets.thePassword)
-              if (json) {
-                tdAmount.innerText = parseFloat(json.amount).toFixed(2)
-                tdPurpose.innerText = json.purpose
-                element.appendChild(tr)
-              }
+          if (txid in seen) {
+            const json = seen[txid]
+            if (json) {
+              tdAmount.innerText = parseFloat(json.amount).toFixed(2)
+              tdPurpose.innerText = json.purpose
+              element.appendChild(tr)
+            }
+          } else
+            return Blockfrost.fetchMetadata(txid).then(metadatas => {
+              seen[txid] = null
+              metadatas.forEach(metadata => {
+                const json = Transaction.extractMetadata(metadata, Secrets.thePassword)
+                if (json) {
+                  tdAmount.innerText = parseFloat(json.amount).toFixed(2)
+                  tdPurpose.innerText = json.purpose
+                  element.appendChild(tr)
+                  seen[txid] = json
+                }
+              })
             })
-          })
         }
       })
     ).then(() => {
