@@ -6,20 +6,12 @@ import * as Secrets     from "./secrets.js"
 import * as Transaction from "./transaction.js"
 
 
-const autoRefresh = false
-
-
 Blockfrost.setKey(Secrets.blockfrostKey)
 
 
 export const theVerificationKey = Address.makeVerificationKey(Secrets.theSigningKey)
 
 export const theAddress = Address.makeAddress(theVerificationKey)
-
-
-function doWaiting(waiting) {
-  document.getElementById("theBody").style.cursor = waiting ? "wait" : "default"
-}
 
 
 function linkAddress(src, address) {
@@ -43,13 +35,8 @@ function linkTxId(src, txid) {
 
 
 export function setup() {
-
   linkAddress(thisAddress, theAddress.to_bech32())
   linkAddress(thatAddress, Secrets.outputAddress.to_bech32())
-
-  if (autoRefresh)
-    setTimeout(refresh, 10000)
-
 }
 
 
@@ -61,8 +48,8 @@ export function checkInput() {
 
 export function submit() {
 
-  doWaiting(true)
-
+  const modal = document.getElementById("modal")
+  modal.style.display = "unset"
   theResult.innerText = "Submitting . . ."
 
   const password = encryptButton.checked ? Secrets.thePassword : null
@@ -79,50 +66,60 @@ export function submit() {
   , password
   ).then(txid => {
     linkTxId(theResult, txid)
-    theAmount.value = 0
+    theAmount.value = ""
     thePurpose.value = ""
-    doWaiting(false)
-    if (autoRefresh)
-      setTimeout(refresh, 10000)
+    modal.style.display = "none"
   }).catch(e => {
     theResult.innerText = e
-    doWaiting(false)
+    modal.style.display = "none"
   })
 }
 
 
-export function refresh() {
-  theOutstanding.innerHTML = ""
-  Blockfrost.queryUtxo(Secrets.outputAddress).then(utxos => {
-    utxos.forEach(utxo => {
-      const txid = utxo.tx_hash
-      const tr = document.createElement("TR")
-      const tdTxId = document.createElement("TD")
-      linkTxId(tdTxId, txid)
-      tr.appendChild(tdTxId)
-      const tdAmount = document.createElement("TD")
-      tdAmount.className = "number"
-      tr.appendChild(tdAmount)
-      const tdPurpose = document.createElement("TD")
-      tr.appendChild(tdPurpose)
-      Blockfrost.fetchMetadata(txid).then(metadatas => {
-        metadatas.forEach(metadata => {
-          const json = Transaction.extractMetadata(metadata, Secrets.thePassword)
-          if (json) {
-            tdAmount.innerText = parseFloat(json.amount).toFixed(2)
-            tdPurpose.innerText = json.purpose
-            theOutstanding.appendChild(tr)
-          }
-        })
+export function refresh(address, element) {
+  element.innerHTML = ""
+  modal.style.display = "unset"
+  Blockfrost.queryUtxo(address).then(utxos => {
+    Promise.all(
+      utxos.map(utxo => {
+        const txid = utxo.tx_hash
+        if (utxo.tx_index == 0) {
+          const tr = document.createElement("TR")
+          const tdTxid = document.createElement("TD")
+          linkTxId(tdTxid, txid)
+          tr.appendChild(tdTxid)
+          const tdAmount = document.createElement("TD")
+          tdAmount.className = "number"
+          tr.appendChild(tdAmount)
+          const tdPurpose = document.createElement("TD")
+          tr.appendChild(tdPurpose)
+          return Blockfrost.fetchMetadata(txid).then(metadatas => {
+            metadatas.forEach(metadata => {
+              const json = Transaction.extractMetadata(metadata, Secrets.thePassword)
+              if (json) {
+                tdAmount.innerText = parseFloat(json.amount).toFixed(2)
+                tdPurpose.innerText = json.purpose
+                element.appendChild(tr)
+              }
+            })
+          })
+        }
       })
+    ).then(() => {
+      modal.style.display = "none"
+    }).catch(e => {
+      theResult.innerText = e
+      modal.style.display = "none"
     })
   }).catch(e => {
     theResult.innerText = e
+    modal.style.display = "none"
   })
 }
 
 
 window.checkInput        = checkInput
-window.refresh           = refresh
+window.refreshRequests   = () => refresh(Secrets.outputAddress, outstandingRequests )
+window.refreshResponses  = () => refresh(theAddress           , outstandingResponses)
 window.setup             = setup
 window.submitTransaction = submit

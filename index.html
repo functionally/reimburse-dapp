@@ -5,54 +5,73 @@
     <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico"/>
     <link href="view.css" type="text/css" rel="stylesheet"/>
     <script src="src/controller.js" type="module"> </script>
-    <title>Request Reimbursement</title>
+    <title>Requesting Reimbursement</title>
   </head>
-  <body id="theBody" onload="setup()">
-    <h1>Request Reimbursement</h1>
-    <hr/>
-    <h2>New Request</h2>
-    <form>
-      <table>
-        <tbody>
-          <tr>
-            <td colspan="2">My address:</td>
-            <td id="thisAddress"></td>
-          </tr>
-          <tr>
-            <td colspan="2">Output address:</td>
-            <td id="thatAddress"></td>
-          </tr>
-          <tr>
-            <td colspan="2"><label for="theAmount">Amount:</label</td>
-            <td>$ <input id="theAmount" type="number" step="0.01" min="0.01" required="true" value="0.00" oninput="checkInput()"/>
-          </tr>
-          <tr>
-            <td colspan="2"><label for="thePurpose">Purpose:</label></td>
-            <td><input id="thePurpose" type="text" minlength="1" maxlength="50" required="true" size="50" oninput="checkInput()"/></td>
-          </tr>
-          <tr>
-            <td>Encrypt?<input id="encryptButton" type="checkbox"/></td>
-            <td><input id="submitButton" type="button" value="Submit" disabled="true" onclick="submitTransaction()"/></td>
-            <td id="theResult"/>
-          </tr>
-        </tbody>
-      </table>
-    </form>
-    <hr/>
-    <h2>Outstanding Requests</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Transaction</th>
-          <th>Amount</th>
-          <th>Purpose</th>
-        </tr>
-      </thead>
-      <tbody id="theOutstanding"/>
-    </table>
+  <body onload="setup()">
     <div>
-      <input id="refresh" type="button" value="Refresh" onclick="refresh()"/>
+      <h1>Requesting Reimbursement</h1>
+      <hr/>
+      <h2>New Request</h2>
+      <form>
+        <table>
+          <tbody>
+            <tr>
+              <td colspan="2">My address:</td>
+              <td id="thisAddress"></td>
+            </tr>
+            <tr>
+              <td colspan="2">Output address:</td>
+              <td id="thatAddress"></td>
+            </tr>
+            <tr>
+              <td colspan="2"><label for="theAmount">Amount:</label</td>
+              <td>$ <input id="theAmount" type="number" step="0.01" min="0.01" required="true" value="" oninput="checkInput()"/>
+            </tr>
+            <tr>
+              <td colspan="2"><label for="thePurpose">Purpose:</label></td>
+              <td><input id="thePurpose" type="text" minlength="1" maxlength="50" required="true" size="50" oninput="checkInput()"/></td>
+            </tr>
+            <tr>
+              <td>Encrypt?<input id="encryptButton" type="checkbox" checked="true"/></td>
+              <td><input id="submitButton" type="button" value="Submit" disabled="true" onclick="submitTransaction()"/></td>
+              <td id="theResult"/>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+      <hr/>
+      <h2>Outstanding Requests</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Transaction</th>
+            <th>Amount</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody id="outstandingRequests"/>
+      </table>
+      <div>
+        <input id="refreshRequests" type="button" value="Refresh" onclick="refreshRequests()"/>
+      </div>
+      <hr/>
+      <h2>Outstanding Responses</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Transaction</th>
+            <th>Amount</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody id="outstandingResponses"/>
+      </table>
+      <div>
+        <input id="refreshResponses" type="button" value="Refresh" onclick="refreshResponses()"/>
+      </div>
+      <hr/>
     </div>
-    <hr/>
+    <div id="modal">
+    </div>
   </body>
 </html>

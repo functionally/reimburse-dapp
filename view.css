@@ -28,6 +28,17 @@ input:invalid {
   margin-top: 1em
 }
 
+#modal {
+  display         : none
+; position        : absolute
+; left            : 0
+; top             : 0
+; width           : 100vw
+; height          : 100vh
+; background-color: #80808080
+; cursor          : wait
+}
+
 body {
   font-family: sans-serif
 }
