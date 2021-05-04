@@ -41,15 +41,15 @@ export function setup() {
 
 
 export function checkInput() {
-  document.getElementById("submitButton").disabled = parseFloat(theAmount.value) <= 0 || thePurpose.value == ""
+  submitButton.disabled = parseFloat(theAmount.value) <= 0 || thePurpose.value == ""
   theResult.innerText = ""
 }
 
 
 export function submit() {
 
-  const modal = document.getElementById("modal")
   modal.style.display = "unset"
+
   theResult.innerText = "Submitting . . ."
 
   const password = encryptButton.checked ? Secrets.thePassword : null
@@ -78,7 +78,8 @@ export function submit() {
 
 export function refresh(address, element) {
   element.innerHTML = ""
-  modal.style.display = "unset"
+  refreshRequestsButton.disabled = true
+  refreshResponsesButton.disabled = true
   Blockfrost.queryUtxo(address).then(utxos => {
     Promise.all(
       utxos.map(utxo => {
@@ -106,14 +107,17 @@ export function refresh(address, element) {
         }
       })
     ).then(() => {
-      modal.style.display = "none"
+      refreshRequestsButton.disabled = false
+      refreshResponsesButton.disabled = false
     }).catch(e => {
       theResult.innerText = e
-      modal.style.display = "none"
+      refreshRequestsButton.disabled = false
+      refreshResponsesButton.disabled = false
     })
   }).catch(e => {
     theResult.innerText = e
-    modal.style.display = "none"
+    refreshRequestsButton.disabled = false
+    refreshResponsesButton.disabled = false
   })
 }
 
