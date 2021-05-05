@@ -116,7 +116,7 @@ export function submitMetadata(
 }
 
 
-export function extractMetadata(metadata, password = null, label = 247424) {
+export async function extractMetadata(metadata, password = null, label = 247424) {
   if ("label" in metadata && metadata.label == String(label)) {
     let json = metadata.json_metadata 
     if (Array.isArray(json)) {

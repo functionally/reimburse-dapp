@@ -111,16 +111,17 @@ export function refresh(address, element) {
           } else
             return Blockfrost.fetchMetadata(txid).then(metadatas => {
               seen[txid] = null
-              metadatas.forEach(metadata => {
-                const json = Transaction.extractMetadata(metadata, Secrets.thePassword)
-                if (json) {
-                  tdDate.innerText = json.date
-                  tdAmount.innerText = parseFloat(json.amount).toFixed(2)
-                  tdPurpose.innerText = json.purpose
-                  element.appendChild(tr)
-                  seen[txid] = json
-                }
-              })
+              Promise.all(metadatas.map(metadata => {
+                Transaction.extractMetadata(metadata, Secrets.thePassword).then(json => {
+                  if (json) {
+                    tdDate.innerText = json.date
+                    tdAmount.innerText = parseFloat(json.amount).toFixed(2)
+                    tdPurpose.innerText = json.purpose
+                    element.appendChild(tr)
+                    seen[txid] = json
+                  }
+                })
+              }))
             })
         }
       })
