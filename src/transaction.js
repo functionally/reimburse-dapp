@@ -122,7 +122,12 @@ export async function extractMetadata(metadata, password = null, label = 247424)
     if (Array.isArray(json)) {
       try {
         const ciphertext = json.map(x => x.slice(2)).join("")
-        json = JSON.parse(Encryption.decryptString(password, ciphertext))
+        return Encryption.decryptString(password, ciphertext).then(plaintext =>
+          {
+            const json = JSON.parse(plaintext)
+            if ("date" in json && "amount" in json && "purpose" in json && parseFloat(json.amount) > 0)
+              return json
+          })
       } catch (e) {
       }
     }

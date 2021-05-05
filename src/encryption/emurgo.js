@@ -33,34 +33,35 @@ export function makeKey() {
 }
 
 
-export function encryptString(key, message) {
+export async function encryptString(key, message) {
   const salt = randomHex(SALT_SIZE)
   const nonce = randomHex(NONCE_SIZE)
   const plaintext = encodeHex(message)
   return Cardano.encrypt_with_password(key, salt, nonce, plaintext)
 }
 
-export function decryptString(key, ciphertext) {
+export async function decryptString(key, ciphertext) {
   const plaintext = Cardano.decrypt_with_password(key, ciphertext)
   return decodeHex(plaintext)
 }
 
 
-export function encryptJson(key, json) {
+export async function encryptJson(key, json) {
   return encryptString(key, JSON.stringify(json))
 }
 
-export function decryptJson(key, ciphertext) {
-  return JSON.parse(decryptString(key, ciphertext))
+export async function decryptJson(key, ciphertext) {
+  return decryptString(key, ciphertext).then(JSON.parse)
 }
 
 
-export function encryptMetadatum(key, json) {
-  const ciphertext = Buffer.from(encryptJson(key, json), "hex")
-  return Cardano.encode_arbitrary_bytes_as_metadatum(ciphertext)
+export async function encryptMetadatum(key, json) {
+  return encryptJson(key, json).then(ciphertext =>
+    Cardano.encode_arbitrary_bytes_as_metadatum(Buffer.from(ciphertext, "hex"))
+  )
 }
 
-export function decryptMetadatum(key, metadatum) {
+export async function decryptMetadatum(key, metadatum) {
   const ciphertext = Cardano.decode_arbitrary_bytes_from_metadatum(metadatum)
   return decryptJson(key, Buffer.from(ciphertext).toString("hex"))
 }
