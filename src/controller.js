@@ -1,7 +1,7 @@
 
 import * as Address     from "./address.js"
 import * as Blockfrost  from "./blockfrost.js"
-import * as Encryption  from "./encryption.js"
+import * as Encryption  from "./encryption/emurgo.js"
 import * as Secrets     from "./secrets.js"
 import * as Transaction from "./transaction.js"
 
