@@ -7,8 +7,31 @@ import * as Encryption from "./encryption/emurgo.js"
 import {Buffer} from '../lib/buffer-es6/index.js'
 
 
+async function packageMetadata(label, metadataJson, key) {
+  function wrap(metadatum) {
+    const general = Cardano.GeneralTransactionMetadata.new()
+    general.insert(
+      Cardano.BigNum.from_str(String(label)),
+      metadatum
+    )
+    return Cardano.TransactionMetadata.new(general)
+  }
+  if (metadataJson) {
+    if (key)
+      return Encryption.encryptMetadatum(key, metadataJson).then(wrap)
+    else {
+      const metadatum = Cardano.encode_json_str_to_metadatum(
+        JSON.stringify(metadataJson),
+        Cardano.MetadataJsonSchema.NoConversions
+      )
+      return wrap(metadatum)
+    }
+    return null
+  }
+}
 
-export function buildTransaction(
+
+export async function buildTransaction(
   utxos,
   signingKey,
   outputAddress,
@@ -51,47 +74,36 @@ export function buildTransaction(
       ),
   )
 
-  let metadata = null
-  if (metadataJson) {
-    let metadatum = null
-    if (key)
-      metadatum = Encryption.encryptMetadatum(key, metadataJson)
-    else
-      metadatum = Cardano.encode_json_str_to_metadatum(
-        JSON.stringify(metadataJson),
-        Cardano.MetadataJsonSchema.NoConversions
-      )
-    const general = Cardano.GeneralTransactionMetadata.new()
-    general.insert(
-      Cardano.BigNum.from_str(String(label)),
-      metadatum
+  return packageMetadata(label, metadataJson, key).then(metadata => {
+
+    if (metadata)
+      txBuilder.set_metadata(metadata)
+
+    txBuilder.add_change_if_needed(address)
+  
+    const txBody = txBuilder.build()
+    const txHash = Cardano.hash_transaction(txBody)
+    const witnesses = Cardano.TransactionWitnessSet.new()
+  
+    const vkeyWitnesses = Cardano.Vkeywitnesses.new()
+    const vkeyWitness = Cardano.make_vkey_witness(txHash, signingKey)
+    vkeyWitnesses.add(vkeyWitness)
+    witnesses.set_vkeys(vkeyWitnesses)
+  
+    const tx = Cardano.Transaction.new(
+        txBody,
+        witnesses,
+        metadata
     )
-    metadata = Cardano.TransactionMetadata.new(general)
-    txBuilder.set_metadata(metadata)
-  }
+  
+    return tx
 
-  txBuilder.add_change_if_needed(address)
+  })
 
-  const txBody = txBuilder.build()
-  const txHash = Cardano.hash_transaction(txBody)
-  const witnesses = Cardano.TransactionWitnessSet.new()
-
-  const vkeyWitnesses = Cardano.Vkeywitnesses.new()
-  const vkeyWitness = Cardano.make_vkey_witness(txHash, signingKey)
-  vkeyWitnesses.add(vkeyWitness)
-  witnesses.set_vkeys(vkeyWitnesses)
-
-  const tx = Cardano.Transaction.new(
-      txBody,
-      witnesses,
-      metadata
-  )
-
-  return tx
 }
 
 
-export function submitMetadata(
+export async function submitMetadata(
   signingKey,
   outputAddress,
   metadataJson = null,
@@ -101,8 +113,8 @@ export function submitMetadata(
 ) {
   const verificationKey = Address.makeVerificationKey(signingKey)
   const address = Address.makeAddress(verificationKey)
-  return Blockfrost.queryUtxo(address).then(function(utxos) {
-    const tx = buildTransaction(
+  return Blockfrost.queryUtxo(address).then(utxos =>
+    buildTransaction(
       utxos,
       signingKey,
       outputAddress,
@@ -110,9 +122,8 @@ export function submitMetadata(
       key,
       label,
       outputValue
-    )
-    return Blockfrost.submitTransaction(tx)
-  })
+    ).then(Blockfrost.submitTransaction)
+  )
 }
 
 
