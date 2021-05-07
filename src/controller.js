@@ -7,8 +7,6 @@ import * as Transaction from "./transaction.js"
 
 
 
-export let theVerificationKey = null
-
 export let theAddress = null
 
 
@@ -34,6 +32,8 @@ function linkTxId(src, txid) {
 
 export function setup() {
 
+  Address.useTestnet()
+
   let secrets = localStorage.getItem("secrets")
   if (!secrets || secrets == "null") {
     secrets = prompt("Secrets:", "")
@@ -44,7 +44,7 @@ export function setup() {
 
   Secrets.initialize(secrets, password).then(() => {
     Blockfrost.setKey(Secrets.blockfrostKey)
-    theVerificationKey = Address.makeVerificationKey(Secrets.theSigningKey)
+    const theVerificationKey = Address.makeVerificationKey(Secrets.theSigningKey)
     theAddress = Address.makeAddress(theVerificationKey)
     linkAddress(thisAddress, theAddress.to_bech32())
     linkAddress(thatAddress, Secrets.outputAddress.to_bech32())
@@ -93,10 +93,9 @@ export function submit() {
 
 let seen = {}
 
-export function refresh(address, element) {
+export function refresh(address, element, button) {
   element.innerHTML = ""
-  refreshRequestsButton.disabled = true
-  refreshResponsesButton.disabled = true
+  button.disabled = true
   Blockfrost.queryUtxo(address).then(utxos => {
     Promise.all(
       utxos.map(utxo => {
@@ -139,23 +138,20 @@ export function refresh(address, element) {
         }
       })
     ).then(() => {
-      refreshRequestsButton.disabled = false
-      refreshResponsesButton.disabled = false
+      button.disabled = false
     }).catch(e => {
       theResult.innerText = e
-      refreshRequestsButton.disabled = false
-      refreshResponsesButton.disabled = false
+      button.disabled = false
     })
   }).catch(e => {
     theResult.innerText = e
-    refreshRequestsButton.disabled = false
-    refreshResponsesButton.disabled = false
+    button.disabled = false
   })
 }
 
 
 window.checkInput        = checkInput
-window.refreshRequests   = () => refresh(Secrets.outputAddress, outstandingRequests )
-window.refreshResponses  = () => refresh(theAddress           , outstandingResponses)
+window.refreshRequests   = () => refresh(Secrets.outputAddress, outstandingRequests , refreshRequestsButton )
+window.refreshResponses  = () => refresh(theAddress           , outstandingResponses, refreshResponsesButton)
 window.setup             = setup
 window.submitTransaction = submit

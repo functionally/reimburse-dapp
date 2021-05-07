@@ -38,7 +38,7 @@ export async function buildTransaction(
   metadataJson = null,
   key = null,
   label = 247424,
-  outputValue = 1000000
+  outputValue = 1500000
 ) {
 
   const verificationKey = Address.makeVerificationKey(signingKey)
