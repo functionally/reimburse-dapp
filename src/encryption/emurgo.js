@@ -28,8 +28,17 @@ function randomHex(size) {
 }
 
 
-export function makeKey() {
+export async function makeKey() {
   return randomHex(KEY_SIZE)
+}
+
+
+export async function exportKey(key) {
+  return Buffer(key, "hex").toString("base64")
+}
+
+export async function importKey(raw) {
+  return Buffer.from(raw, "base64").toString("hex")
 }
 
 
