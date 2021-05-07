@@ -36,11 +36,11 @@ export function setup() {
 
   let secrets = localStorage.getItem("secrets")
   if (!secrets || secrets == "null") {
-    secrets = prompt("Secrets:", "")
+    secrets = prompt("Enter encrypted secrets:", "")
     localStorage.setItem("secrets", secrets)
   }
 
-  const password = prompt("Password:", "")
+  const password = prompt("Enter password:", "")
 
   Secrets.initialize(secrets, password).then(() => {
     Blockfrost.setKey(Secrets.blockfrostKey)
@@ -116,7 +116,7 @@ export function refresh(address, element, button) {
             const json = seen[txid]
             if (json) {
               tdDate.innerText = json.date
-              tdAmount.innerText = parseFloat(json.amount).toFixed(2)
+              tdAmount.innerText = "$" + parseFloat(json.amount).toFixed(2)
               tdPurpose.innerText = json.purpose
               element.appendChild(tr)
             }
