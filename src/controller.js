@@ -6,12 +6,10 @@ import * as Secrets     from "./secrets.js"
 import * as Transaction from "./transaction.js"
 
 
-Blockfrost.setKey(Secrets.blockfrostKey)
 
+export let theVerificationKey = null
 
-export const theVerificationKey = Address.makeVerificationKey(Secrets.theSigningKey)
-
-export const theAddress = Address.makeAddress(theVerificationKey)
+export let theAddress = null
 
 
 function linkAddress(src, address) {
@@ -35,8 +33,23 @@ function linkTxId(src, txid) {
 
 
 export function setup() {
-  linkAddress(thisAddress, theAddress.to_bech32())
-  linkAddress(thatAddress, Secrets.outputAddress.to_bech32())
+
+  let secrets = localStorage.getItem("secrets")
+  if (!secrets || secrets == "null") {
+    secrets = prompt("Secrets:", "")
+    localStorage.setItem("secrets", secrets)
+  }
+
+  const password = prompt("Password:", "")
+
+  Secrets.initialize(secrets, password).then(() => {
+    Blockfrost.setKey(Secrets.blockfrostKey)
+    theVerificationKey = Address.makeVerificationKey(Secrets.theSigningKey)
+    theAddress = Address.makeAddress(theVerificationKey)
+    linkAddress(thisAddress, theAddress.to_bech32())
+    linkAddress(thatAddress, Secrets.outputAddress.to_bech32())
+  })
+
 }
 
 
