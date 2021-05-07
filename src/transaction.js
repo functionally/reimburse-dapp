@@ -129,18 +129,15 @@ export async function submitMetadata(
 
 export async function extractMetadata(metadata, password = null, label = 247424) {
   if ("label" in metadata && metadata.label == String(label)) {
-    let json = metadata.json_metadata 
+    const json = metadata.json_metadata 
     if (Array.isArray(json)) {
-      try {
-        const ciphertext = json.map(x => x.slice(2)).join("")
-        return Encryption.decryptString(password, ciphertext).then(plaintext =>
+        const ciphertext = Buffer.from(json.map(x => x.slice(2)).join(""), "hex")
+        return Encryption.decryptJson(password, ciphertext).then(json1 =>
           {
-            const json = JSON.parse(plaintext)
-            if ("date" in json && "amount" in json && "purpose" in json && parseFloat(json.amount) > 0)
-              return json
-          })
-      } catch (e) {
-      }
+            if ("date" in json1 && "amount" in json1 && "purpose" in json1 && parseFloat(json1.amount) > 0)
+              return json1
+          }
+        ).catch(e => null)
     }
     if ("date" in json && "amount" in json && "purpose" in json && parseFloat(json.amount) > 0)
       return json

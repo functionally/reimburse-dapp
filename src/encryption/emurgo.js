@@ -46,11 +46,12 @@ export async function encryptString(key, message) {
   const salt = randomHex(SALT_SIZE)
   const nonce = randomHex(NONCE_SIZE)
   const plaintext = encodeHex(message)
-  return Cardano.encrypt_with_password(key, salt, nonce, plaintext)
+  const ciphertext = Cardano.encrypt_with_password(key, salt, nonce, plaintext)
+  return Buffer.from(ciphertext, "hex")
 }
 
 export async function decryptString(key, ciphertext) {
-  const plaintext = Cardano.decrypt_with_password(key, ciphertext)
+  const plaintext = Cardano.decrypt_with_password(key, Buffer.from(ciphertext).toString("hex"))
   return decodeHex(plaintext)
 }
 
@@ -66,11 +67,11 @@ export async function decryptJson(key, ciphertext) {
 
 export async function encryptMetadatum(key, json) {
   return encryptJson(key, json).then(ciphertext =>
-    Cardano.encode_arbitrary_bytes_as_metadatum(Buffer.from(ciphertext, "hex"))
+    Cardano.encode_arbitrary_bytes_as_metadatum(ciphertext)
   )
 }
 
 export async function decryptMetadatum(key, metadatum) {
   const ciphertext = Cardano.decode_arbitrary_bytes_from_metadatum(metadatum)
-  return decryptJson(key, Buffer.from(ciphertext).toString("hex"))
+  return decryptJson(key, ciphertext)
 }
