@@ -19,6 +19,7 @@ function decodeHex(hex) {
   return Buffer.from(hex, "hex").toString()
 }
 
+
 function randomBytes(size) {
   return Buffer.from(crypto.getRandomValues(new Uint8Array(size)))
 }
