@@ -32,8 +32,6 @@ function linkTxId(src, txid) {
 
 export function setup() {
 
-  Address.useTestnet()
-
   let secrets = localStorage.getItem("secrets")
   if (!secrets || secrets == "null") {
     secrets = prompt("Enter encrypted configuration:", "")
@@ -46,12 +44,16 @@ export function setup() {
   if (!password)
     return
 
-  Secrets.initialize(secrets, password).then(() => {
+  Secrets.initialize(secrets, password).then(configuration => {
     Blockfrost.setKey(Secrets.blockfrostKey)
     const theVerificationKey = Address.makeVerificationKey(Secrets.theSigningKey)
     theAddress = Address.makeAddress(theVerificationKey)
     linkAddress(thisAddress, theAddress.to_bech32())
     linkAddress(thatAddress, Secrets.outputAddress.to_bech32())
+    if (configuration.mainnet)
+      Address.useMainnet()
+    else
+      Address.useTestnet()
   })
 
 }

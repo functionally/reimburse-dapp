@@ -14,7 +14,7 @@ export function readSecrets(secrets) {
   blockfrostKey = secrets.blockfrostKey
   outputAddress = Address.from_bech32(secrets.outputAddress)
   theSigningKey = Address.readSigningKey(secrets.signingKey)
-  return Encryption.importKey(secrets.password).then(key => {thePassword = key})
+  return Encryption.importKey(secrets.password).then(key => {thePassword = key; return secrets})
 }
 
 
