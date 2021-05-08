@@ -7,7 +7,7 @@ import * as Transaction from "./transaction.js"
 
 
 
-export let theAddress = null
+let theAddress = null
 
 
 function linkAddress(src, address) {
@@ -30,17 +30,21 @@ function linkTxId(src, txid) {
 }
 
 
-export function setup() {
+function setup() {
 
   Address.useTestnet()
 
   let secrets = localStorage.getItem("secrets")
   if (!secrets || secrets == "null") {
-    secrets = prompt("Enter encrypted secrets:", "")
+    secrets = prompt("Enter encrypted configuration:", "")
+    if (!secrets)
+      return
     localStorage.setItem("secrets", secrets)
   }
 
   const password = prompt("Enter password:", "")
+  if (!password)
+    return
 
   Secrets.initialize(secrets, password).then(() => {
     Blockfrost.setKey(Secrets.blockfrostKey)
@@ -52,14 +56,19 @@ export function setup() {
 
 }
 
+function reconfigure() {
+  localStorage.removeItem("secrets")
+  setup()
+}
 
-export function checkInput() {
+
+function checkInput() {
   submitButton.disabled = theDate == "" || parseFloat(theAmount.value) <= 0 || thePurpose.value == ""
   theResult.innerText = ""
 }
 
 
-export function submit() {
+function submit() {
 
   modal.style.display = "unset"
 
@@ -93,9 +102,8 @@ export function submit() {
 
 let seen = {}
 
-export function refresh(address, element, button) {
+async function refresh(address, element) {
   element.innerHTML = ""
-  button.disabled = true
   Blockfrost.queryUtxo(address).then(utxos => {
     Promise.all(
       utxos.map(utxo => {
@@ -137,21 +145,31 @@ export function refresh(address, element, button) {
             })
         }
       })
-    ).then(() => {
-      button.disabled = false
-    }).catch(e => {
-      theResult.innerText = e
-      button.disabled = false
-    })
+    )
+  })
+}
+
+function refreshAll() {
+  refreshButton.disabled = true
+  refresh(
+    Secrets.outputAddress,
+    outstandingRequests
+  ).then(() =>
+    refresh(
+      theAddress,
+      outstandingResponses
+    )
+  ).then(() => {
+    refreshButton.disabled = false
   }).catch(e => {
     theResult.innerText = e
-    button.disabled = false
+    refreshButton.disabled = false
   })
 }
 
 
 window.checkInput        = checkInput
-window.refreshRequests   = () => refresh(Secrets.outputAddress, outstandingRequests , refreshRequestsButton )
-window.refreshResponses  = () => refresh(theAddress           , outstandingResponses, refreshResponsesButton)
+window.refreshAll        = refreshAll
+window.reconfigure       = reconfigure
 window.setup             = setup
 window.submitTransaction = submit

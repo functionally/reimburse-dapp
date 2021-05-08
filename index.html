@@ -44,6 +44,11 @@
         </table>
       </form>
       <hr/>
+      <div>
+        <input id="refreshButton"     type="button" value="Refresh"     onclick="refreshAll()" />
+        <input id="reconfigureButton" type="button" value="Reconfigure" onclick="reconfigure()"/>
+      </div>
+      <hr/>
       <h2>Outstanding Requests</h2>
       <table>
         <thead>
@@ -56,9 +61,6 @@
         </thead>
         <tbody id="outstandingRequests"/>
       </table>
-      <div>
-        <input id="refreshRequestsButton" type="button" value="Refresh" onclick="refreshRequests()"/>
-      </div>
       <hr/>
       <h2>Outstanding Responses</h2>
       <table>
@@ -72,9 +74,6 @@
         </thead>
         <tbody id="outstandingResponses"/>
       </table>
-      <div>
-        <input id="refreshResponsesButton" type="button" value="Refresh" onclick="refreshResponses()"/>
-      </div>
       <hr/>
     </div>
     <div id="modal">
