@@ -30,7 +30,7 @@ function linkTxId(src, txid) {
 }
 
 
-function setup() {
+export function setup() {
 
   Address.useTestnet()
 
@@ -56,19 +56,19 @@ function setup() {
 
 }
 
-function reconfigure() {
+export function reconfigure() {
   localStorage.removeItem("secrets")
   setup()
 }
 
 
-function checkInput() {
+export function checkInput() {
   submitButton.disabled = theDate == "" || parseFloat(theAmount.value) <= 0 || thePurpose.value == ""
   theResult.innerText = ""
 }
 
 
-function submit() {
+export function submitTransaction() {
 
   modal.style.display = "unset"
 
@@ -102,7 +102,7 @@ function submit() {
 
 let seen = {}
 
-async function refresh(address, element) {
+export async function refresh(address, element) {
   element.innerHTML = ""
   Blockfrost.queryUtxo(address).then(utxos => {
     Promise.all(
@@ -149,7 +149,7 @@ async function refresh(address, element) {
   })
 }
 
-function refreshAll() {
+export function refreshAll() {
   refreshButton.disabled = true
   refresh(
     Secrets.outputAddress,
@@ -166,10 +166,3 @@ function refreshAll() {
     refreshButton.disabled = false
   })
 }
-
-
-window.checkInput        = checkInput
-window.refreshAll        = refreshAll
-window.reconfigure       = reconfigure
-window.setup             = setup
-window.submitTransaction = submit
