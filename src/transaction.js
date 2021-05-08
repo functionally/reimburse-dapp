@@ -109,7 +109,7 @@ export async function submitMetadata(
   metadataJson = null,
   key = null,
   label = 247424,
-  outputValue = 1000000
+  outputValue = 1500000
 ) {
   const verificationKey = Address.makeVerificationKey(signingKey)
   const address = Address.makeAddress(verificationKey)
