@@ -57,7 +57,14 @@ export function setup() {
 }
 
 export function reconfigure() {
+
+  theResult.innerText = ""
+  theRefresh.innerText = ""
+  outstandingRequests.innerHTML = ""
+  outstandingResponses.innerHTML = ""
+
   localStorage.removeItem("secrets")
+
   setup()
 }
 
@@ -150,6 +157,7 @@ export async function refresh(address, element) {
 }
 
 export function refreshAll() {
+  theRefresh.innerText = ""
   refreshButton.disabled = true
   refresh(
     Secrets.outputAddress,
@@ -162,7 +170,7 @@ export function refreshAll() {
   ).then(() => {
     refreshButton.disabled = false
   }).catch(e => {
-    theResult.innerText = e
+    theRefresh.innerText = e
     refreshButton.disabled = false
   })
 }

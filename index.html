@@ -13,6 +13,7 @@
   <body>
     <div>
       <h1>Requesting Reimbursement</h1>
+      <input id="reconfigureButton" type="button" value="Reconfigure" onclick="Controller.reconfigure()"/>
       <hr/>
       <h2>New Request</h2>
       <form>
@@ -49,9 +50,8 @@
       <hr/>
       <div>
         <input id="refreshButton"     type="button" value="Refresh"     onclick="Controller.refreshAll()" />
-        <input id="reconfigureButton" type="button" value="Reconfigure" onclick="Controller.reconfigure()"/>
+        <span id="theRefresh"/>
       </div>
-      <hr/>
       <h2>Outstanding Requests</h2>
       <table>
         <thead>
@@ -64,7 +64,6 @@
         </thead>
         <tbody id="outstandingRequests"/>
       </table>
-      <hr/>
       <h2>Outstanding Responses</h2>
       <table>
         <thead>
