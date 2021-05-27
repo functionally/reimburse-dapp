@@ -4,7 +4,7 @@ import * as Blockfrost  from "./blockfrost.js"
 import * as Encryption  from "./encryption/webapi.js"
 import * as Secrets     from "./secrets.js"
 import * as Transaction from "./transaction.js"
-
+import init, * as CSL   from "../lib/cardano-serialization-lib/cardano_serialization_lib.js"
 
 
 let theAddress = null
@@ -44,16 +44,19 @@ export function setup() {
   if (!password)
     return
 
-  Secrets.initialize(secrets, password).then(configuration => {
-    Blockfrost.setKey(Secrets.blockfrostKey)
-    const theVerificationKey = Address.makeVerificationKey(Secrets.theSigningKey)
-    theAddress = Address.makeAddress(theVerificationKey)
-    linkAddress(thisAddress, theAddress.to_bech32())
-    linkAddress(thatAddress, Secrets.outputAddress.to_bech32())
-    if (configuration.mainnet)
-      Address.useMainnet()
-    else
-      Address.useTestnet()
+  init().then(() => {
+    window.Cardano = CSL
+    Secrets.initialize(secrets, password).then(configuration => {
+      Blockfrost.setKey(Secrets.blockfrostKey)
+      const theVerificationKey = Address.makeVerificationKey(Secrets.theSigningKey)
+      theAddress = Address.makeAddress(theVerificationKey)
+      linkAddress(thisAddress, theAddress.to_bech32())
+      linkAddress(thatAddress, Secrets.outputAddress.to_bech32())
+      if (configuration.mainnet)
+        Address.useMainnet()
+      else
+        Address.useTestnet()
+    })
   })
 
 }

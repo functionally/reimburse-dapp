@@ -1,10 +1,8 @@
 
 import {Buffer} from '../lib/buffer-es6/index.js'
 
-import * as Cardano from "../lib/cardano-serialization-lib-asmjs/cardano_serialization_lib.js"
 
-
-let magic = Cardano.NetworkInfo.testnet(1097911063).network_id()
+let magic = null
 
 export function useMainnet() {
   magic = Cardano.NetworkInfo.mainnet().network_id()
@@ -15,7 +13,9 @@ export function useTestnet(i = 1097911063) {
 }
 
 
-export const from_bech32 = Cardano.Address.from_bech32
+export function from_bech32(x) {
+  return Cardano.Address.from_bech32(x)
+}
 
 
 export function readSigningKey(bech32) {

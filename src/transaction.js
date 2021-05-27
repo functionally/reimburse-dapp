@@ -1,7 +1,6 @@
 
 import * as Address    from "./address.js"
 import * as Blockfrost from "./blockfrost.js"
-import * as Cardano    from "../lib/cardano-serialization-lib-asmjs/cardano_serialization_lib.js"
 import * as Encryption from "./encryption/webapi.js"
 
 import {Buffer} from '../lib/buffer-es6/index.js'
