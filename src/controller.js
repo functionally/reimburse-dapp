@@ -147,7 +147,7 @@ export async function refresh(address, element) {
                 Transaction.extractMetadata(metadata, Secrets.thePassword).then(json => {
                   if (json) {
                     tdDate.innerText = json.date
-                    tdAmount.innerText = parseFloat(json.amount).toFixed(2)
+                    tdAmount.innerText = "$" + parseFloat(json.amount).toFixed(2)
                     tdPurpose.innerText = json.purpose
                     element.appendChild(tr)
                     seen[txid] = json
