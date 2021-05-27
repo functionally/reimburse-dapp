@@ -100,6 +100,7 @@ export function submitTransaction() {
   , metadataJson
   , password
   ).then(txid => {
+    console.log(txid) // FIXME: For debugging rare exceptionless failure.
     linkTxId(theResult, txid)
     theDate.value = ""
     theAmount.value = ""
