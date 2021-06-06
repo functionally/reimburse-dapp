@@ -38,7 +38,7 @@ export async function buildTransaction(
   metadataJson = null,
   key = null,
   label = 247424,
-  outputValue = 1500000
+  outputValue = 1000000
 ) {
 
   const verificationKey = Address.makeVerificationKey(signingKey)
@@ -53,24 +53,28 @@ export async function buildTransaction(
     Cardano.BigNum.from_str('2000000')
   )
 
+  const perInput = Cardano.Value.new(Cardano.BigNum.from_str(String(outputValue)))
+  let totalValue = Cardano.Value.new(Cardano.BigNum.from_str("0"))
   utxos.forEach(function(utxo) {
+    const inputValue = Cardano.Value.new(Cardano.BigNum.from_str(utxo.amount[0].quantity))
     txBuilder.add_key_input(
-        verificationKey.hash(),
-        Cardano.TransactionInput.new(
-            Cardano.TransactionHash.from_bytes(
-                Buffer.from(utxo.tx_hash, "hex")
-            ),
-            utxo.tx_index,
+      verificationKey.hash(),
+      Cardano.TransactionInput.new(
+        Cardano.TransactionHash.from_bytes(
+           Buffer.from(utxo.tx_hash, "hex")
         ),
-        Cardano.Value.new(Cardano.BigNum.from_str(utxo.amount[0].quantity))
+        utxo.tx_index,
+      ),
+      inputValue
     )
+    totalValue = totalValue.checked_add(perInput)
   })
 
   txBuilder.add_output(
-      Cardano.TransactionOutput.new(
+    Cardano.TransactionOutput.new(
       outputAddress,
-      Cardano.Value.new(Cardano.BigNum.from_str(String(outputValue)))
-      ),
+      totalValue
+    )
   )
 
   return packageMetadata(label, metadataJson, key).then(metadata => {
@@ -109,7 +113,7 @@ export async function submitMetadata(
   metadataJson = null,
   key = null,
   label = 247424,
-  outputValue = 1500000
+  outputValue = 1000000
 ) {
   return Blockfrost.queryUtxo(address).then(utxos =>
     buildTransaction(
