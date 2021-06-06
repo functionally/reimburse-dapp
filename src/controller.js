@@ -49,7 +49,7 @@ export function setup() {
     Secrets.initialize(secrets, password).then(configuration => {
       Blockfrost.setKey(Secrets.blockfrostKey)
       const theVerificationKey = Address.makeVerificationKey(Secrets.theSigningKey)
-      theAddress = Address.makeAddress(theVerificationKey)
+      theAddress = Secrets.inputAddress
       linkAddress(thisAddress, theAddress.to_bech32())
       linkAddress(thatAddress, Secrets.outputAddress.to_bech32())
       if (configuration.mainnet)
@@ -96,6 +96,7 @@ export function submitTransaction() {
 
   Transaction.submitMetadata(
     Secrets.theSigningKey
+  , Secrets.inputAddress
   , Secrets.outputAddress
   , metadataJson
   , password

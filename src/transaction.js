@@ -33,6 +33,7 @@ async function packageMetadata(label, metadataJson, key) {
 export async function buildTransaction(
   utxos,
   signingKey,
+  address,
   outputAddress,
   metadataJson = null,
   key = null,
@@ -41,7 +42,6 @@ export async function buildTransaction(
 ) {
 
   const verificationKey = Address.makeVerificationKey(signingKey)
-  const address = Address.makeAddress(verificationKey)
 
   const txBuilder = Cardano.TransactionBuilder.new(
     Cardano.LinearFee.new(
@@ -104,18 +104,18 @@ export async function buildTransaction(
 
 export async function submitMetadata(
   signingKey,
+  address,
   outputAddress,
   metadataJson = null,
   key = null,
   label = 247424,
   outputValue = 1500000
 ) {
-  const verificationKey = Address.makeVerificationKey(signingKey)
-  const address = Address.makeAddress(verificationKey)
   return Blockfrost.queryUtxo(address).then(utxos =>
     buildTransaction(
       utxos,
       signingKey,
+      address,
       outputAddress,
       metadataJson,
       key,

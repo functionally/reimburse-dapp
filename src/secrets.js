@@ -6,12 +6,14 @@ import {Buffer} from '../lib/buffer-es6/index.js'
 
 
 export let blockfrostKey = null
+export let inputAddress  = null
 export let outputAddress = null
 export let theSigningKey = null
 export let thePassword   = null
 
 export function readSecrets(secrets) {
   blockfrostKey = secrets.blockfrostKey
+  inputAddress  = Address.from_bech32(secrets.inputAddress )
   outputAddress = Address.from_bech32(secrets.outputAddress)
   theSigningKey = Address.readSigningKey(secrets.signingKey)
   return Encryption.importKey(secrets.password).then(key => {thePassword = key; return secrets})

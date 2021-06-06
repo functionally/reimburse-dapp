@@ -18,21 +18,13 @@ export function from_bech32(x) {
 }
 
 
-export function readSigningKey(bech32) {
-  return Cardano.PrivateKey.from_extended_bytes(
-    Buffer.from(bech32, "hex")
-  )
+export function readSigningKey(raw) {
+  return Cardano.Bip32PrivateKey.from_bytes(
+    Buffer.from(raw, "hex")
+  ).to_raw_key()
 }
 
 
 export function makeVerificationKey(signingKey) {
   return signingKey.to_public()
-}
-
-
-export function makeAddress(verificationKey) {
-  return Cardano.EnterpriseAddress.new(
-    magic,
-    Cardano.StakeCredential.from_keyhash(verificationKey.hash())
-  ).to_address()
 }
