@@ -1,5 +1,5 @@
 
-const blockfrostUrl = "https://cardano-testnet.blockfrost.io/api/v0/"
+const blockfrostUrl = "https://cardano-mainnet.blockfrost.io/api/v0/"
 
 let blockfrostKey = null
 
