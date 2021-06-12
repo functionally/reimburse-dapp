@@ -10,6 +10,8 @@ import init, * as CSL   from "../lib/cardano-serialization-lib/cardano_serializa
 let theAddress = null
 
 
+let linkAddressUrl = null
+
 function linkAddress(src, address) {
   const a = document.createElement("A")
   a.target = "_reimburse"
@@ -19,6 +21,8 @@ function linkAddress(src, address) {
   src.appendChild(a)
 }
 
+
+let linkTransactionUrl = null
 
 function linkTxId(src, txid) {
   const a = document.createElement("A")
@@ -47,15 +51,21 @@ export function setup() {
   init().then(() => {
     window.Cardano = CSL
     Secrets.initialize(secrets, password).then(configuration => {
+      Blockfrost.setNetwork(configuration.mainnet)
       Blockfrost.setKey(Secrets.blockfrostKey)
       const theVerificationKey = Address.makeVerificationKey(Secrets.theSigningKey)
       theAddress = Secrets.inputAddress
       linkAddress(thisAddress, theAddress.to_bech32())
       linkAddress(thatAddress, Secrets.outputAddress.to_bech32())
-      if (configuration.mainnet)
+      if (configuration.mainnet) {
         Address.useMainnet()
-      else
+        linkAddressUrl     = "https://cardanoscan.io/address/"
+        linkTransactionUrl = "https://cardanoscan.io/transaction/"
+      } else {
         Address.useTestnet()
+        linkAddressUrl     = "https://explorer.cardano-testnet.iohkdev.io/en/address?address="
+        linkTransactionUrl = "https://explorer.cardano-testnet.iohkdev.io/en/transaction?id="
+      }
     })
   })
 

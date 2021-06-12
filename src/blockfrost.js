@@ -1,8 +1,15 @@
 
-const blockfrostUrl = "https://cardano-mainnet.blockfrost.io/api/v0/"
+let blockfrostUrl = null
+
+export function setNetwork(mainnet) {
+  if (mainnet)
+    blockfrostUrl = "https://cardano-mainnet.blockfrost.io/api/v0/"
+  else
+    blockfrostUrl = "https://cardano-testnet.blockfrost.io/api/v0/"
+}
+
 
 let blockfrostKey = null
-
 
 export function setKey(key) {
   blockfrostKey = key
